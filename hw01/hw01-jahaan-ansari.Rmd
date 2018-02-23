@@ -1,0 +1,204 @@
+---
+title: "hw01-jahaan-ansari"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+
+#Part 2 - Data Import
+col_names <- c(
+    "symboling",
+    "normalized_losses",
+    "make",
+    "fuel_type",
+    "aspiration",
+    "num_of_doors",
+    "body_style",
+    "drive_wheels",
+    "engine_location",
+    "wheel_base",
+    "length",
+    "width",
+    "height",
+    "curb_weight",
+    "engine_type",
+    "num_of_cylinders",
+    "engine_size",
+    "fuel_system",
+    "bore",
+    "stroke",
+    "compression_ratio",
+    "horsepower",
+    "peak_rpm",
+    "city_mpg",
+    "highway_mpg",
+    "price"
+)
+
+col_types <- c(
+    "integer",
+    "real",
+    "character",
+    "character",
+    "character",
+    "character",
+    "character",
+    "character",
+    "character",
+    "real",
+    "real",
+    "real",
+    "real",
+    "integer",
+    "character",
+    "character",
+    "integer",
+    "character",
+    "real",
+    "real",
+    "real",
+    "integer",
+    "integer",
+    "integer",
+    "integer",
+    "integer"
+)
+
+data <- read.csv(
+    'imports-85.data',
+    col.names = col_names,
+    colClasses = col_types,
+    na.strings=c("?")
+)
+
+str(data)
+
+col_type_list = as.list(c(col_integer(),
+                          col_double(),
+                          col_character(),
+                          col_character(),
+                          col_character(),
+                          col_character(),
+                          col_character(),
+                          col_character(),
+                          col_character(),
+                          col_double(),
+                          col_double(),
+                          col_double(),
+                          col_double(),
+                          col_integer(),
+                          col_character(),
+                          col_character(),
+                          col_integer(),
+                          col_character(),
+                          col_double(),
+                          col_double(),
+                          col_double(),
+                          col_integer(),
+                          col_integer(),
+                          col_integer(),
+                          col_integer(),
+                          col_integer()))
+
+readr_data <- read_csv('imports-85.data', col_names = col_names, col_types = col_type_list)
+str(readr_data)
+
+
+#Part 3 - Technical Questions about importing data
+#a. The names of the columns become the first row of the data's values for the respective column. For numerical columns the comlumn name is preceeded by and X. (i.e. a column with the first value 77 will be called "X77")
+
+#b. The columns will be titled "V#" where # is the column number
+
+#c. They are converted to <chr> data types
+
+#d. Without knowing the data types, more space needs to be allocated in order to remain flexible and store any possible type of data. By defining the data types before hand less space is necessary.
+
+#e. When converting the dataframe to a matrix, none numeric fields are converted to NA
+
+
+
+#Part 5
+#a. $12913.19, $15838.15
+gas <- data[data$fuel_type == "gas",]
+mean(gas$price, rm.na = TRUE)
+
+diesel <- data[data$fuel_type == "diesel",]
+mean(diesel$price, rm.na = TRUE)
+
+#b. jaguar
+data[data$num_of_cylinders == "twelve", ]$make
+
+#c. peugot
+sort(table(diesel$make), decreasing = TRUE)
+
+#d. NA
+data[data$horsepower == max(data$horsepower, na.rm = TRUE),]$price
+
+#e. 17.0 mpg
+quantile(data$city_mpg, probs = seq(0, 1, by= 0.1))
+
+#f. 38 mpg
+quantile(data$highway_mpg, probs = seq(0, 1, by= 0.1))
+
+#g. $32250
+median(data[data$city_mpg <= 17,]$price, na.rm = TRUE)
+
+#part 6
+#a. Returns NULL
+
+#b.
+  #1. Succcesful
+  #2. Successful only if mpg is the first column
+  #3. Successful only if mpg is the first column
+  #4. Unuccessful 
+  #5. Successful
+  #6. Successful
+  #7. Successful
+
+#c. only 3 would always fail and that's because mpg is interpreted as a variable rather than a string. if mpg <- "mpg" then it would actually work
+
+#d. YES: If a list or data frame or matrix is passed to ‘data.frame’ it is as if each component or column had been passed as a separate argument
+# i.e. data.frame(a = I(list(1,2,3,4)))
+
+#e. It will return a list of lists where inner lists are the column values
+
+#f. data.frame(abc)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+prices <- c(data$price)
+hist(prices, main="Distribution of Car Prices", col = c("red", "orange", "yellow", "green", "blue", "purple", "grey", "black", "white"))
+
+#Distribution is skewed right as most of the prices are clustered at the lower end. The stats (mean etc) are shown below
+summary(data$price, na.rm = TRUE)
+
+boxplot(data$horsepower,horizontal = TRUE)
+#once again we see a skewed right distribution with a median around 95 HP and 75% of the data below ~120 HP. There are 4 outliers with HP > 200
+
+bt_table <- table(data$body_style)
+sorted_bt_table <- sort(bt_table,decreasing = TRUE)
+barplot(sorted_bt_table)
+#Most sedans (96) and hatchbacks (70). Very few convertibles (5) and hardtops (8). There are 25 stationwagons.
+
+turbo_cars <- data[data$aspiration == "turbo",][,c("wheel_base", "length", "width", "height", "price")]
+stars(x = turbo_cars, col.segments = c("red", "green","blue", "yellow", "orange"), draw.segments = TRUE)
+# Car 23 and 27 are low in all 5 categories. Cars 8, 67-70 and 199+ are all high in these categories
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
