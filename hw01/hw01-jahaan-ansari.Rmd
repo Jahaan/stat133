@@ -14,7 +14,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
-
+library(readr)
 #Part 2 - Data Import
 col_names <- c(
     "symboling",
@@ -83,32 +83,7 @@ data <- read.csv(
 
 str(data)
 
-col_type_list = as.list(c(col_integer(),
-                          col_double(),
-                          col_character(),
-                          col_character(),
-                          col_character(),
-                          col_character(),
-                          col_character(),
-                          col_character(),
-                          col_character(),
-                          col_double(),
-                          col_double(),
-                          col_double(),
-                          col_double(),
-                          col_integer(),
-                          col_character(),
-                          col_character(),
-                          col_integer(),
-                          col_character(),
-                          col_double(),
-                          col_double(),
-                          col_double(),
-                          col_integer(),
-                          col_integer(),
-                          col_integer(),
-                          col_integer(),
-                          col_integer()))
+col_type_list = as.list(c(col_integer(),col_double(),col_character(),col_character(), col_character(), col_character(), col_character(), col_character(), col_character(), col_double(), col_double(), col_double(), col_double(), col_integer(), col_character(), col_character(), col_integer(), col_character(), col_double(), col_double(), col_double(), col_integer(), col_integer(), col_integer(), col_integer(), col_integer()))
 
 readr_data <- read_csv('imports-85.data', col_names = col_names, col_types = col_type_list)
 str(readr_data)
@@ -130,10 +105,10 @@ str(readr_data)
 #Part 5
 #a. $12913.19, $15838.15
 gas <- data[data$fuel_type == "gas",]
-mean(gas$price, rm.na = TRUE)
+mean(gas$price, na.rm = TRUE)
 
 diesel <- data[data$fuel_type == "diesel",]
-mean(diesel$price, rm.na = TRUE)
+mean(diesel$price, na.rm = TRUE)
 
 #b. jaguar
 data[data$num_of_cylinders == "twelve", ]$make
@@ -173,6 +148,76 @@ median(data[data$city_mpg <= 17,]$price, na.rm = TRUE)
 #e. It will return a list of lists where inner lists are the column values
 
 #f. data.frame(abc)
+
+#part 7
+nums <- sapply(data, is.numeric)
+qdat <- na.omit(data[,nums])[ , -which(names(data) %in% c("symboling","normalized_losses"))]
+cor_dat <- cor(qdat)
+library(corrplot)
+corrplot(cor_dat)
+corrplot(cor_dat, type = "upper", order="hclust", col = c("black", "white"), bg = "lightblue")
+
+#most positively correlated variables:
+# city_mpg - highway_mpg
+# wheel_base - length, width, weight, price
+# length - width, weight, price
+# width - weight, price
+# engine_size - horse_power
+
+#most negatively correlated variables:
+# city_mpg - wheel_base, length, width, weight, price, bore, engine_size, horse_power
+# highway_mpg - wheel_base, length, width, weight, price, bore, engine_size, horse_power
+
+#Part 8
+#8.1 - 79.6%
+pca_prcomp <- prcomp(qdat, scale. = TRUE)
+eigenvalues <- pca_prcomp$sdev^2
+eigs <- eigenvalues
+eigs_perc <- 100 * eigs / sum(eigs)
+eigs_cum <- cumsum(eigs_perc)
+
+eigs_df <- data.frame(
+  eigenvalue = eigs,
+  percentage = eigs_perc,
+  'cumulative percentage' = eigs_cum
+)
+
+print(round(eigs_df, 4), print.gap = 2)
+
+#8.2 
+
+plot(pca_prcomp$x, type = "n", las = 1)
+abline(h = 0, v = 0)
+points(pca_prcomp$x[ ,1], pca_prcomp$x[ ,2], pch = 19, 
+       col = "#88888877")
+title(main = "PC Plot of Vehicles")
+
+pca_princomp <- princomp(qdat, cor = TRUE)
+scores <- pca_prcomp$x
+pc_cors <- cor(qdat, scores)
+# function to create a circle
+circle <- function(center = c(0, 0), npoints = 100) {
+  r = 1
+  tt = seq(0, 2 * pi, length = npoints)
+  xx = center[1] + r * cos(tt)
+  yy = center[1] + r * sin(tt)
+  return(data.frame(x = xx, y = yy))
+}
+
+corcir <- circle(c(0, 0), npoints = 100)
+
+# circle of correlations
+plot(pc_cors[ ,1:2], type = 'n', las = 1, xlim = c(-1, 1), ylim = c(-1, 1),
+     xlab = "Axis 1", ylab = "Axis 2", asp = 1)
+title("Correlations between variables and PCs (2 first dimensions)",
+      cex.main = 1)
+lines(corcir, col = "gray70")
+abline(h = 0, v = 0, col = "gray80")
+arrows(rep(0, nrow(pc_cors)), rep(0, nrow(pc_cors)), pc_cors[,1], pc_cors[,2], 
+       length = 0.05)
+text(pc_cors[ ,1], pc_cors[ ,2], rownames(pc_cors), col = "#55555588")
+
+#The best variables are the mpg's as they are closest to the circle. Height and stroke are the worst
 ```
 
 ## Including Plots
