@@ -1,0 +1,85 @@
+---
+title: "lab1"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r lab1}
+
+# variables
+phone <- 80
+transportation <- 20
+groceries <- 527
+gym <- 10
+rent <- 1500
+other <- 83
+
+# total expenses
+total <- phone + transportation + groceries + gym + rent + other
+
+# semester expenses
+semester <- total * 5
+
+# year expenses
+year <- semester * 2
+
+# your vector expenses
+expenses = c(phone, transportation, groceries, gym, rent, other)
+barplot(expenses)
+
+decreasing_vector = sort(expenses, decreasing = TRUE)
+barplot(decreasing_vector, names.arg = c("phone", "transp.", "groc.", "gym", "rent", "other"))
+
+#source(file = "~/Berkeley/lab1_script.R") to run script
+
+#pythagoras 
+a <- 3
+b <- 4 
+c <- sqrt(a**2 + b**2)
+
+#binomial
+n <- 5
+p <- .5
+k <- 2
+factorial(n)/(factorial(k)*factorial(n-k))
+choose(n,k)
+(factorial(n)/(factorial(k)*factorial(n-k)))*(p**k)*((1-p)**(n-k))
+
+#die roll
+n <- 10
+p <- 1/6
+k <- 3
+(factorial(n)/(factorial(k)*factorial(n-k)))*(p**k)*((1-p)**(n-k))
+
+dbinom(k,n,p)
+
+#change p = .35 and do everything the same
+#biased coin
+n <- 5
+p <- .35
+k <- 3
+dbinom(k,n,p)
+```

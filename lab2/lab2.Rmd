@@ -1,0 +1,147 @@
+---
+title: "Lab2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Do all the objects have the same length?
+Yes
+
+Are there missing values, i.e. NA, in any of the objects?
+No
+
+Class of objects
+player is "character"
+team is "factor"
+points(all) are "integer"
+position is "character"
+salary is "numeric"
+
+How do you know if any of the loaded objects is a vector?
+is.vector()
+
+How do you know that a given vector is of a certain data type?
+use typeof
+
+players in position Center, of Warriors (GSW)
+"Damian Jones"  "David West"   
+"JaVale McGee"  "Kevon Looney" 
+"Zaza Pachulia"
+
+players of both GSW (warriors) and LAL (lakers)
+ [1] "Andre Iguodala"      
+ [2] "Damian Jones"        
+ [3] "David West"          
+ [4] "Draymond Green"      
+ [5] "Ian Clark"           
+ [6] "James Michael McAdoo"
+ [7] "JaVale McGee"        
+ [8] "Kevin Durant"        
+ [9] "Kevon Looney"        
+[10] "Klay Thompson"       
+[11] "Matt Barnes"         
+[12] "Patrick McCaw"       
+[13] "Shaun Livingston"    
+[14] "Stephen Curry"       
+[15] "Zaza Pachulia"       
+[16] "Brandon Ingram"      
+[17] "Corey Brewer"        
+[18] "D'Angelo Russell"    
+[19] "David Nwaba"         
+[20] "Ivica Zubac"         
+[21] "Jordan Clarkson"     
+[22] "Julius Randle"       
+[23] "Larry Nance Jr."     
+[24] "Luol Deng"           
+[25] "Metta World Peace"   
+[26] "Nick Young"          
+[27] "Tarik Black"         
+[28] "Thomas Robinson"     
+[29] "Timofey Mozgov"      
+[30] "Tyler Ennis
+
+players in positions Shooting Guard and Point Guards, of Lakers (LAL)
+[1] "D'Angelo Russell" "David Nwaba"     
+[3] "Jordan Clarkson"  "Nick Young"      
+[5] "Tyler Ennis"
+
+subset Small Forwards of GSW and LAL
+[1] "Andre Iguodala"    "Kevin Durant"     
+[3] "Matt Barnes"       "Brandon Ingram"   
+[5] "Corey Brewer"      "Luol Deng"        
+[7] "Metta World Peace"
+
+name of the player with largest salary
+"LeBron James"
+
+name of the player with smallest salary
+"Edy Tavares"
+
+name of the player with largest number of scored points
+"Russell Westbrook"
+
+salary of the player with largest number of points
+26540100
+
+largest salary of all Centers
+26540100
+
+team of the player with the largest number of scored points
+OKC
+
+name of the player with the largest number of 3-pointers
+"Stephen Curry"
+
+```{r cars}
+load('nba2017-salary-points.RData')
+length(player)
+
+sum(is.na(position))
+
+four <- head(player, n = 4)
+four[1]
+four[-1]
+four[-c(1,2,3)]
+four[5]
+four[c(1,2,2,3,3,3)]
+
+even_players <- player[seq(2,length(player), 2)]
+odd_sal <- salary[seq(1,length(salary), 2)]
+team5 <- team[seq(5, length(team), 5)]
+score10 <- points[seq(5, length(team), 5)]
+rev_team <- team[seq(length(team)-1,2, -2)]
+
+player[team == "GSW" & position == "C"]
+
+
+player[salary == max(salary)]
+
+max(salary[position == "C"])
+
+warriors_player <- player[team == "GSW"]
+warriors_salary <- salary[team == "GSW"]
+warriors_points <- points[team == "GSW"]
+names(warriors_salary) <- warriors_player
+warriors_salary[c("Stephen Curry", "Kevin Durant")]
+warriors_salary["Andre Iguodala"]
+
+plot.new()
+plot(warriors_points, warriors_salary)
+text(warriors_points, warriors_salary, labels = abbreviate(warriors_player))
+
+log_scored <- log(warriors_points)
+log_salary <- log(warriors_salary)
+plot.new()
+plot(log_scored, log_salary)
+text(log_scored, log_salary, labels = abbreviate(warriors_player))
+plot.new()
+salary_millions <- salary/10000000
+scored_points = 3*points3 + 2*points2 + points1
+
+position_fac <- factor(position)
+plot(points, salary, col=position_fac)
+```
+
